@@ -1,0 +1,64 @@
+{
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/vgg-sdk.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch --format esm",
+    "build": "tsdx build --format esm",
+    "build-dic": "tsdx build --format esm --entry src/vgg_di_container.tsx --name vgg_di_container",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prettier": "tsdx lint src --fix",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "vgg-sdk",
+  "author": "Guanhua Hou",
+  "module": "dist/vgg-sdk.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/vgg-sdk.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/vgg-sdk.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@babel/preset-react": "^7.18.6",
+    "@size-limit/preset-small-lib": "^8.2.4",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "husky": "^8.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "size-limit": "^8.2.4",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.5"
+  }
+}
