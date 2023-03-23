@@ -28,7 +28,7 @@ async function getVgg(): Promise<VggWasmInstanceType> {
 
 async function getContainer(): Promise<any> {
   // @ts-ignore Import module from url
-  return await import(/* webpackIgnore: true */ 'http://s3.vgg.cool/test/js/vgg-js-di-container.esm.js');
+  return await import(/* webpackIgnore: true */ 'http://s3.vgg.cool/test/js/vgg-di-container.esm.js');
 }
 
 
