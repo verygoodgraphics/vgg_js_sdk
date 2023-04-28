@@ -7,7 +7,29 @@ describe('smoke', () => {
   test('call getDesignDocument', async () => {
     // Setup
     const mockFn = jest.spyOn(VggSdk, 'getVggSdk');
-    mockFn.mockImplementation(() => { return Promise.resolve({}) });
+    const mockDocument = {
+      level: 0,
+      a: {
+        level: 1,
+        b: {
+          level: 2,
+          c: {
+            level: 3,
+            d: {
+              level: 4
+            }
+          }
+        }
+      },
+      array1: [1, 2, 3],
+    };
+    const mockDocumentString = JSON.stringify(mockDocument);
+    mockFn.mockImplementation(() => {
+      let fakeSdk: VggSdk.VggSdkType = {
+        getDesignDocument: () => { return mockDocumentString; }
+      };
+      return Promise.resolve(fakeSdk);
+    });
 
     // Given
     const sut = DesignDocument;

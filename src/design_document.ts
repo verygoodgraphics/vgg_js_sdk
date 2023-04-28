@@ -3,9 +3,12 @@ import { getVggSdk } from './basic_sdk';
 
 async function getDesignDocument() {
   const sdk = await getVggSdk();
-  console.log(sdk);
+  const docString = sdk.getDesignDocument();
+  const doc = JSON.parse(docString);
 
-  return {}
+  console.log(doc);
+
+  return doc;
 }
 
 

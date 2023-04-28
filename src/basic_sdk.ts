@@ -1,4 +1,13 @@
-type VggSdkType = Object;
+interface VggSdkType {
+  // addObserver(observer: VggSdkObserver): void;
+
+  getDesignDocument(): string;
+
+  // addAt(path: string, value: string): void;
+  // deleteAt(path: string): void;
+  // updateAt(path: string, value: string): void;
+}
+
 type VggWasmInstanceType = any;
 
 let vggSdk: VggSdkType | null;
@@ -32,4 +41,4 @@ async function getContainer(): Promise<any> {
 }
 
 
-export { getVggSdk, setVgg, getVgg };
+export { getVggSdk, setVgg, getVgg, VggSdkType };
