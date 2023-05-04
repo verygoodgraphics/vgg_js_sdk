@@ -35,18 +35,21 @@ class ProxyHandler {
   constructor() {
   }
 
-  set(obj: VggDesignDocumentType, prop: string, value: any) {
+  set(target: VggDesignDocumentType, prop: string, value: any) {
     // @ts-ignore
-    let path = getPathToNode(obj[_proxyKey], this.rootDesignDocProxy!);
-
+    let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
     try {
-      this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, value);
+      if (target[prop]) {
+        this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, value);
+      } else {
+        this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, value);
+      }
     } catch (error) {
       throw error;
     }
 
     let proxyObj = makeDeepProxy(value, this.rootDesignDocProxy!);
-    obj[prop] = proxyObj;
+    target[prop] = proxyObj;
     return true;
   }
 
@@ -54,6 +57,7 @@ class ProxyHandler {
     if (prop in target) {
       // @ts-ignore
       let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
+      console.log(`delete property called: target = ${target}, path = ${path + prop}`);
       try {
         this.rootDesignDocProxy?.sdk?.deleteAt(`${path}${prop}`);
       } catch (error) {
@@ -70,7 +74,6 @@ class ProxyHandler {
     let targetProxy = target[_proxyKey]
     if (targetProxy) {
       let path = getPathToNode(targetProxy, this.rootDesignDocProxy!);
-      console.log('#handler, defineProperty: ', path);
       console.log(`define property called: target = ${target}, path = ${path + prop}`);
     }
     // todo? make the property deep proxy

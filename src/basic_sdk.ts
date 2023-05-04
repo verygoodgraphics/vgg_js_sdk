@@ -5,7 +5,7 @@ interface VggSdkType {
 
   addAt(path: string, value: string): void;
   deleteAt(path: string): void;
-  // updateAt(path: string, value: string): void;
+  updateAt(path: string, value: string): void;
 }
 
 type VggWasmInstanceType = any;

@@ -7,6 +7,7 @@ describe('basic', () => {
   const mockFn = jest.spyOn(VggSdk, 'getVggSdk');
   const mockAddAtFn = jest.fn((_path: string, _value: string) => { });
   const mockDeleteAtFn = jest.fn((_path: string) => { });
+  const mockUpdateAtFn = jest.fn((_path: string, _value: string) => { });
   // Setup
   beforeEach(() => {
     const mockDocument = {
@@ -31,6 +32,7 @@ describe('basic', () => {
         getDesignDocument: () => { return mockDocumentString; },
         addAt: mockAddAtFn,
         deleteAt: mockDeleteAtFn,
+        updateAt: mockUpdateAtFn,
       };
       return Promise.resolve(fakeSdk);
     });
@@ -87,5 +89,17 @@ describe('basic', () => {
 
     // Then
     expect(mockDeleteAtFn).toHaveBeenCalledWith('/a/b/c/d');
+  })
+
+  test('design document: update field', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+    const obj1 = {};
+
+    // When
+    sut.a.b.c.d = obj1;
+
+    // Then
+    expect(mockUpdateAtFn).toHaveBeenCalledWith('/a/b/c/d', obj1);
   })
 });
