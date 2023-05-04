@@ -4,7 +4,7 @@ interface VggSdkType {
   getDesignDocument(): string;
 
   addAt(path: string, value: string): void;
-  // deleteAt(path: string): void;
+  deleteAt(path: string): void;
   // updateAt(path: string, value: string): void;
 }
 

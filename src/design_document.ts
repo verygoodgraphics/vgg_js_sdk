@@ -49,17 +49,22 @@ class ProxyHandler {
     obj[prop] = proxyObj;
     return true;
   }
+
   deleteProperty(target: VggDesignDocumentType, prop: string) {
     if (prop in target) {
       // @ts-ignore
       let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
-      console.log(`proxy delete called: prop = ${prop}, path = ${path + prop}`);
+      try {
+        this.rootDesignDocProxy?.sdk?.deleteAt(`${path}${prop}`);
+      } catch (error) {
+        throw error;
+      }
 
-      delete target[prop]._parent;
       return delete target[prop];
     }
     return false;
   }
+
   defineProperty(target: VggDesignDocumentType, prop: string, descriptor: object) {
     // @ts-ignore
     let targetProxy = target[_proxyKey]
