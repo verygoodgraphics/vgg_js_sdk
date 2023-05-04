@@ -8,8 +8,6 @@ interface VggDesignDocumentType {
   [index: string]: any,
   // @ts-ignore
   [index: symbol]: any,
-  _isProxyKey: boolean | null,
-  _proxyKey: VggDesignDocumentType | null
 }
 
 async function getDesignDocument(): Promise<VggDesignDocumentType> {
@@ -29,7 +27,7 @@ function isProxy(doc: VggDesignDocumentType): boolean {
 
 
 // internal
-class ProxyHandler {
+class VggProxyHandler {
   rootDesignDocProxy: VggDesignDocumentType | undefined;
 
   constructor() {
@@ -57,7 +55,6 @@ class ProxyHandler {
     if (prop in target) {
       // @ts-ignore
       let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
-      console.log(`delete property called: target = ${target}, path = ${path + prop}`);
       try {
         this.rootDesignDocProxy?.sdk?.deleteAt(`${path}${prop}`);
       } catch (error) {
@@ -69,14 +66,28 @@ class ProxyHandler {
     return false;
   }
 
-  defineProperty(target: VggDesignDocumentType, prop: string, descriptor: object) {
-    // @ts-ignore
-    let targetProxy = target[_proxyKey]
-    if (targetProxy) {
-      let path = getPathToNode(targetProxy, this.rootDesignDocProxy!);
-      console.log(`define property called: target = ${target}, path = ${path + prop}`);
+  defineProperty(target: VggDesignDocumentType, prop: PropertyKey, descriptor: PropertyDescriptor) {
+    if (typeof prop == 'string') {
+      let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
+      try {
+        if (descriptor.value) {
+          let value = descriptor.value;
+          if (typeof value == 'object') {
+            let proxyObj = makeDeepProxy(value, this.rootDesignDocProxy!);
+            descriptor.value = proxyObj;
+
+            if (target[prop]) {
+              this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, value);
+            } else {
+              this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, value);
+            }
+          }
+
+        }
+      } catch (error) {
+        throw error;
+      }
     }
-    // todo? make the property deep proxy
     return Reflect.defineProperty(target, prop, descriptor);
   }
 }
@@ -109,7 +120,7 @@ function makeDeepProxy(object: VggDesignDocumentType, rootObject: VggDesignDocum
     return object;
   }
 
-  let handler = new ProxyHandler();
+  let handler = new VggProxyHandler();
   let selfProxy = new Proxy(object, handler);
   handler.rootDesignDocProxy = rootObject || selfProxy;
   Object.defineProperty(selfProxy, _isProxyKey, {
