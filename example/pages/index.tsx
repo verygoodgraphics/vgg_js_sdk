@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { getVgg, setVgg } from '../../'
+import { getVgg, setVgg, DesignDocument } from '../../'
 
 
 export default function Home() {
@@ -14,12 +14,27 @@ export default function Home() {
   )
 }
 
-getVgg().then((vgg) => {
-  console.debug('#vgg is: ', vgg);
-});
+function test0() {
+  getVgg().then((vgg) => {
+    console.debug('#vgg is: ', vgg);
+  });
 
-setVgg({ foo: "bar" })
+  setVgg({ foo: "bar" })
 
-getVgg().then((vgg) => {
-  console.debug('#vgg is: ', vgg);
-});
+  getVgg().then((vgg) => {
+    console.debug('#vgg is: ', vgg);
+  });
+}
+
+async function test1() {
+  // Given
+  const sut = await DesignDocument.getDesignDocument();
+
+  // When
+  sut.a.b.c.d.k1 = 1;
+
+  // Then
+  console.log(sut.a.b.c.d);
+}
+
+test1();

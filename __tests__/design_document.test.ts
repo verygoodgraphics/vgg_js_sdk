@@ -5,6 +5,7 @@ import * as VggSdk from '../src/basic_sdk'
 
 describe('basic', () => {
   const mockFn = jest.spyOn(VggSdk, 'getVggSdk');
+  const mockAddAtFn = jest.fn((_path: string, _value: string) => { });
   // Setup
   beforeEach(() => {
     const mockDocument = {
@@ -26,7 +27,8 @@ describe('basic', () => {
     const mockDocumentString = JSON.stringify(mockDocument);
     mockFn.mockImplementation(() => {
       let fakeSdk: VggSdk.VggSdkType = {
-        getDesignDocument: () => { return mockDocumentString; }
+        getDesignDocument: () => { return mockDocumentString; },
+        addAt: mockAddAtFn,
       };
       return Promise.resolve(fakeSdk);
     });
@@ -56,5 +58,21 @@ describe('basic', () => {
 
     // Then
     expect(sut.isProxy(doc)).toBeTruthy;
+  })
+
+  test('design document: add field', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+    const obj1 = {}
+
+    // When
+    sut.a.b.c.d.k1 = obj1;
+    // Then
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k1', obj1);
+
+    // When
+    sut.a.b.c.d.k1.k2 = obj1;
+    // Then
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k1/k2', obj1);
   })
 });
