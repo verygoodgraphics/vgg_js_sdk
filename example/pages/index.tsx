@@ -31,8 +31,18 @@ async function test1() {
   const sut = await DesignDocument.getDesignDocument();
 
   // When
-  sut.a.b.c.d.k1 = 1;
+  sut.array1.push('str1');
+  // Then
+  console.log(sut);
+  return;
 
+  // When
+  sut.a.b.c.d.k1 = {};
+  // Then
+  console.log(sut.a.b.c.d);
+
+  // When
+  sut.a.b.c.d.k1.k2 = {};
   // Then
   console.log(sut.a.b.c.d);
 }

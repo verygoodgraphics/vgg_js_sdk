@@ -2,6 +2,7 @@ import { getVggSdk } from './basic_sdk';
 
 const _isProxyKey = Symbol();
 const _proxyKey = Symbol();
+const _parentKey = Symbol();
 
 interface VggDesignDocumentType {
   // https://github.com/Microsoft/TypeScript/issues/24587
@@ -36,18 +37,29 @@ class VggProxyHandler {
   set(target: VggDesignDocumentType, prop: string, value: any) {
     // @ts-ignore
     let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
+    let copiedValue = value;
+    if (path != '/' || prop != 'sdk') {
+      copiedValue = JSON.parse(JSON.stringify(value));
+    }
+
     try {
       if (target[prop]) {
-        this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, value);
+        this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, copiedValue);
       } else {
-        this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, value);
+        this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, copiedValue);
       }
     } catch (error) {
       throw error;
     }
 
-    let proxyObj = makeDeepProxy(value, this.rootDesignDocProxy!);
-    target[prop] = proxyObj;
+    if (typeof copiedValue == 'object') {
+      let childProxy = makeDeepProxy(copiedValue, this.rootDesignDocProxy!);
+      // @ts-ignore
+      defineParent(childProxy, target[_proxyKey]);
+      target[prop] = childProxy;
+    } else {
+      target[prop] = copiedValue;
+    }
     return true;
   }
 
@@ -68,6 +80,7 @@ class VggProxyHandler {
 
   defineProperty(target: VggDesignDocumentType, prop: PropertyKey, descriptor: PropertyDescriptor) {
     if (typeof prop == 'string') {
+      // @ts-ignore
       let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
       try {
         if (descriptor.value) {
@@ -92,22 +105,40 @@ class VggProxyHandler {
   }
 }
 
-function getPathToNode(child: VggDesignDocumentType, node: VggDesignDocumentType): string | null {
-  if (child === node) {
-    return '/';
-  } else {
-    for (const [key, value] of Object.entries(node)) {
-      if (child === node) {
-        return `/${key}`;
-      }
-      const subPath = getPathToNode(child, value);
-      if (subPath) {
-        return `/${key}${subPath}`;
-      }
-    }
+function getPathToNode(childProxy: VggDesignDocumentType, _nodeProxy: VggDesignDocumentType): string | null {
+  return calculatNodePath(childProxy);
+}
+
+/*
+parent.childName = child
+parent.children[0] = child
+*/
+function calculatNodePath(nodeProxy: VggDesignDocumentType) {
+  let path = ""
+
+  if (!nodeProxy) {
+    return path
   }
 
-  return null;
+  let childProxy = nodeProxy
+  // @ts-ignore
+  while (childProxy[_parentKey]) {
+    // @ts-ignore
+    let parentProxy = childProxy[_parentKey];
+
+    for (const [childName, childEntry] of Object.entries(parentProxy)) {
+      if (childEntry === childProxy) {
+        path = `${childName}/${path}`;
+        break;
+      }
+    }
+
+    childProxy = parentProxy
+  }
+
+  path = `/${path}`;
+
+  return path
 }
 
 function makeDeepProxy(object: VggDesignDocumentType, rootObject: VggDesignDocumentType | undefined) {
@@ -136,9 +167,10 @@ function makeDeepProxy(object: VggDesignDocumentType, rootObject: VggDesignDocum
     const value = object[name];
 
     if (value && typeof value === "object") {
-      let child = makeDeepProxy(value, handler.rootDesignDocProxy);
+      let childProxy = makeDeepProxy(value, handler.rootDesignDocProxy);
+      defineParent(childProxy, selfProxy);
       // @ts-ignore
-      object[name] = child;
+      object[name] = childProxy;
     }
   }
 
@@ -150,6 +182,16 @@ function makeDeepProxy(object: VggDesignDocumentType, rootObject: VggDesignDocum
   });
 
   return selfProxy;
+}
+
+function defineParent(childProxy: VggDesignDocumentType, parentProxy: VggDesignDocumentType) {
+  if (parentProxy) {
+    Object.defineProperty(childProxy, _parentKey, {
+      value: parentProxy,
+      enumerable: false,
+      configurable: false,
+    });
+  }
 }
 
 // todo, observe native update

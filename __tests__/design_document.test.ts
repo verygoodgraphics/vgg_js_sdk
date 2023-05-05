@@ -5,9 +5,9 @@ import * as VggSdk from '../src/basic_sdk'
 
 describe('basic', () => {
   const mockFn = jest.spyOn(VggSdk, 'getVggSdk');
-  const mockAddAtFn = jest.fn((_path: string, _value: string) => { });
-  const mockDeleteAtFn = jest.fn((_path: string) => { });
-  const mockUpdateAtFn = jest.fn((_path: string, _value: string) => { });
+  const mockAddAtFn = jest.fn((_path: string, _value: string) => { console.log(`fakeSdk, addAt: ${_path}, ${_value}`); });
+  const mockDeleteAtFn = jest.fn((_path: string) => { console.log(`fakeSdk, deleteAt: ${_path}`); });
+  const mockUpdateAtFn = jest.fn((_path: string, _value: string) => { console.log(`fakeSdk, updateAt: ${_path}, ${_value}`); });
 
   beforeEach(() => {
     const mockDocument = {
@@ -85,6 +85,18 @@ describe('basic', () => {
     sut.a.b.c.d.k1.k2 = obj1;
     // Then
     expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k1/k2', obj1);
+  })
+
+  test('design document: add item to array property', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+    const obj1 = {}
+
+    // When
+    sut.array1.push(obj1);
+
+    // Then
+    expect(mockAddAtFn).toHaveBeenCalledWith('/array1/3', obj1);
   })
 
   test('design document: add property using []', async () => {
