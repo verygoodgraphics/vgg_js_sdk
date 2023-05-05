@@ -1,5 +1,6 @@
 import Head from 'next/head'
-import { getVgg, setVgg, DesignDocument } from '../../'
+import { getVgg, setVgg, DesignDocument, mockVggSdk } from '../../'
+import { VggSdkType } from '@/../dist/basic_sdk';
 
 
 export default function Home() {
@@ -28,23 +29,51 @@ function test0() {
 
 async function test1() {
   // Given
+  const fakeSdk: VggSdkType = {
+    getDesignDocument() {
+      const mockDocument = {
+        level: 0,
+        a: {
+          level: 1,
+          b: {
+            level: 2,
+            c: {
+              level: 3,
+              d: {
+                level: 4
+              }
+            }
+          }
+        },
+        array1: [1, 2, 3],
+      };
+      const mockDocumentString = JSON.stringify(mockDocument);
+      return mockDocumentString;
+    },
+    addAt(path, value) {
+      console.log('fakeSdk, addAt: ', path, value);
+    },
+    deleteAt(path) {
+      console.log('fakeSdk, deleteAt: ', path);
+    },
+    updateAt(path, value) {
+      console.log('fakeSdk, updateAt: ', path, value);
+    },
+  }
+  mockVggSdk(fakeSdk);
   const sut = await DesignDocument.getDesignDocument();
 
   // When
   sut.array1.push('str1');
   // Then
-  console.log(sut);
-  return;
 
   // When
   sut.a.b.c.d.k1 = {};
   // Then
-  console.log(sut.a.b.c.d);
 
   // When
   sut.a.b.c.d.k1.k2 = {};
   // Then
-  console.log(sut.a.b.c.d);
 }
 
 test1();

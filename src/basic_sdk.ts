@@ -23,6 +23,10 @@ async function getVggSdk(): Promise<VggSdkType> {
   return vggSdk!;
 }
 
+async function mockVggSdk(sdk: VggSdkType) {
+  vggSdk = sdk;
+}
+
 function setVgg(value: VggWasmInstanceType) {
   getContainer().then((container) => {
     container.vggSetObject(vggWasmKey, value);
@@ -41,4 +45,4 @@ async function getContainer(): Promise<any> {
 }
 
 
-export { getVggSdk, setVgg, getVgg, VggSdkType };
+export { getVggSdk, mockVggSdk, setVgg, getVgg, VggSdkType };
