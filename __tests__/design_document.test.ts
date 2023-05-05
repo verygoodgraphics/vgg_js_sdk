@@ -97,6 +97,7 @@ describe('basic', () => {
 
     // Then
     expect(mockAddAtFn).toHaveBeenCalledWith('/array1/3', obj1);
+    expect(mockUpdateAtFn).toBeCalledTimes(0); // NOT toHaveBeenCalledWith('/array1/length', 4);
   })
 
   test('design document: add property using []', async () => {
@@ -163,6 +164,18 @@ describe('basic', () => {
     expect(mockDeleteAtFn).toHaveBeenCalledWith('/a/b/c/d');
   })
 
+  test('design document: delete item in array property', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+
+    // When
+    sut.array1.pop();
+
+    // Then
+    expect(mockDeleteAtFn).toHaveBeenCalledWith('/array1/2');
+    expect(mockUpdateAtFn).toBeCalledTimes(0); // NOT toHaveBeenCalledWith('/array1/length', 2);
+  })
+
   test('design document: update property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
@@ -173,5 +186,17 @@ describe('basic', () => {
 
     // Then
     expect(mockUpdateAtFn).toHaveBeenCalledWith('/a/b/c/d', obj1);
+  })
+
+  test('design document: update item in array property', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+    const value = 'item 0'
+
+    // When
+    sut.array1[0] = value;
+
+    // Then
+    expect(mockUpdateAtFn).toHaveBeenCalledWith('/array1/0', value);
   })
 });

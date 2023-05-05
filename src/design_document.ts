@@ -44,7 +44,10 @@ class VggProxyHandler {
 
     try {
       if (target[prop]) {
-        this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, copiedValue);
+        // skip, array.length
+        if (!Array.isArray(target) || prop !== 'length') {
+          this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, copiedValue);
+        }
       } else {
         this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, copiedValue);
       }
