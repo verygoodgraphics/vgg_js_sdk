@@ -7,10 +7,15 @@ interface VggSdkType {
   deleteAt(path: string): void;
   updateAt(path: string, value: string): void;
 }
+interface VggContrainerType {
+  vggSetObject(key: string, value: any): void;
+  vggGetObject(key: string): any;
+}
 
 type VggWasmInstanceType = any;
 
 let vggSdk: VggSdkType | null;
+let vggContainer: VggContrainerType | null;
 
 const vggWasmKey = 'vggWasmKey';
 
@@ -39,10 +44,21 @@ async function getVgg(): Promise<VggWasmInstanceType> {
 }
 
 
-async function getContainer(): Promise<any> {
+async function getContainer(): Promise<VggContrainerType> {
+  if (!vggContainer) {
+    vggContainer = await getRemoteContainer();
+  }
+  return Promise.resolve(vggContainer!);
+}
+
+async function getRemoteContainer(): Promise<VggContrainerType> {
   // @ts-ignore Import module from url
   return await import(/* webpackIgnore: true */ 'https://s3.vgg.cool/test/js/vgg-di-container.esm.js');
 }
 
+function mockContainer(container: VggContrainerType) {
+  vggContainer = container;
+}
 
-export { getVggSdk, mockVggSdk, setVgg, getVgg, VggSdkType };
+
+export { getVggSdk, setVgg, getVgg, VggSdkType, mockVggSdk, VggContrainerType, mockContainer };
