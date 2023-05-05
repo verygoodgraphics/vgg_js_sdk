@@ -1,3 +1,5 @@
+import * as localVggContainer from './vgg-di-container'
+
 interface VggSdkType {
   // addObserver(observer: VggSdkObserver): void;
 
@@ -56,9 +58,9 @@ async function getRemoteContainer(): Promise<VggContrainerType> {
   return await import(/* webpackIgnore: true */ 'https://s3.vgg.cool/test/js/vgg-di-container.esm.js');
 }
 
-function mockContainer(container: VggContrainerType) {
-  vggContainer = container;
+function mockVggContainer() {
+  vggContainer = localVggContainer;
 }
 
 
-export { getVggSdk, setVgg, getVgg, VggSdkType, mockVggSdk, VggContrainerType, mockContainer };
+export { getVggSdk, setVgg, getVgg, VggSdkType, mockVggSdk, VggContrainerType, mockVggContainer };

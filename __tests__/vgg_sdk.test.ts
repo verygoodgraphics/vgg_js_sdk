@@ -1,9 +1,6 @@
-import { describe, expect, test } from '@jest/globals';
-
-
 import * as VggSdk from '../src/index'
-import * as localVggContainer from '../src/vgg-di-container'
-import { mockContainer } from '../src/basic_sdk';
+
+import { describe, expect, test } from '@jest/globals';
 
 
 describe('smoke', () => {
@@ -21,7 +18,7 @@ describe('smoke', () => {
   test('getVggSdk', async () => {
     // Given
     const sut = VggSdk;
-    mockContainer(localVggContainer);
+    sut.mockVggContainer();
 
     // When
     const vgg = await sut.getVgg();

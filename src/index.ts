@@ -1,4 +1,4 @@
-import { getVggSdk, mockVggSdk, setVgg, getVgg } from './basic_sdk';
+import { getVggSdk, setVgg, getVgg, mockVggSdk, mockVggContainer } from './basic_sdk';
 import * as DesignDocument from './design_document';
 
-export { getVggSdk, mockVggSdk, setVgg, getVgg, DesignDocument };
+export { getVggSdk, setVgg, getVgg, DesignDocument, mockVggSdk, mockVggContainer };
