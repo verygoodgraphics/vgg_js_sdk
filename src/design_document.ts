@@ -38,7 +38,8 @@ class VggProxyHandler {
     // @ts-ignore
     let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
     let copiedValue = value;
-    if (path != '/' || prop != 'sdk') {
+    const isSdk = (path === '/' && prop === 'sdk');
+    if (!isSdk) {
       copiedValue = JSON.parse(JSON.stringify(value));
     }
 
@@ -46,16 +47,16 @@ class VggProxyHandler {
       if (target[prop]) {
         // skip, array.length
         if (!Array.isArray(target) || prop !== 'length') {
-          this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, copiedValue);
+          this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, JSON.stringify(copiedValue));
         }
       } else {
-        this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, copiedValue);
+        this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, JSON.stringify(copiedValue));
       }
     } catch (error) {
       throw error;
     }
 
-    if (typeof copiedValue == 'object') {
+    if (typeof copiedValue == 'object' && !isSdk) {
       let childProxy = makeDeepProxy(copiedValue, this.rootDesignDocProxy!);
       // @ts-ignore
       defineParent(childProxy, target[_proxyKey]);
