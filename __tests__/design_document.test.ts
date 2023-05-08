@@ -1,7 +1,8 @@
 import { beforeEach, afterAll, describe, expect, jest, test, afterEach } from '@jest/globals';
 
-import * as DesignDocument from '../src/design_document'
-import * as VggSdk from '../src/basic_sdk'
+import * as DesignDocument from '../src/design_document';
+import * as VggSdk from '../src/basic_sdk';
+import { Color } from '../src/design_document_types';
 
 describe('basic', () => {
   const mockFn = jest.spyOn(VggSdk, 'getVggSdk');
@@ -79,12 +80,23 @@ describe('basic', () => {
     // When
     sut.a.b.c.d.k1 = obj1;
     // Then
-    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k1', obj1);
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k1', JSON.stringify(obj1));
 
     // When
     sut.a.b.c.d.k1.k2 = obj1;
     // Then
-    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k1/k2', obj1);
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k1/k2', JSON.stringify(obj1));
+  })
+
+  test('design document: add color property', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+    const aColor: Color = { class: 'color', alpha: 1.0, red: 0.9, blue: 1.0, green: 0 };
+
+    // When
+    sut.a.b.c.d.color = aColor;
+    // Then
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/color', JSON.stringify(aColor));
   })
 
   test('design document: add item to array property', async () => {
@@ -96,7 +108,7 @@ describe('basic', () => {
     sut.array1.push(obj1);
 
     // Then
-    expect(mockAddAtFn).toHaveBeenCalledWith('/array1/3', obj1);
+    expect(mockAddAtFn).toHaveBeenCalledWith('/array1/3', JSON.stringify(obj1));
     expect(mockUpdateAtFn).toBeCalledTimes(0); // NOT toHaveBeenCalledWith('/array1/length', 4);
   })
 
@@ -109,7 +121,7 @@ describe('basic', () => {
     sut.a.b.c.d['k2'] = obj1;
 
     // Then
-    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k2', obj1);
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k2', JSON.stringify(obj1));
   })
 
   test('design document: add property using Object.assign', async () => {
@@ -122,7 +134,7 @@ describe('basic', () => {
     Object.assign(sut.a.b.c.d, src1);
 
     // Then
-    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k3', obj1);
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k3', JSON.stringify(obj1));
   })
 
   test('design document: DO NOT USE, error thrown. add property using Object.defineProperty', async () => {
@@ -143,14 +155,7 @@ describe('basic', () => {
     }
 
     // Then
-    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k4', obj1);
-    expect(sut.a.b.c.d.k4).toEqual(obj1);
 
-
-    // // When
-    // delete sut.a.b.c.d.k4.k5;   // k4 must be enumerable: enumerable: true,
-    // // Then
-    // expect(mockDeleteAtFn).toHaveBeenCalledWith('/a/b/c/d/k4/k5');
   })
 
   test('design document: delete property', async () => {
@@ -185,7 +190,7 @@ describe('basic', () => {
     sut.a.b.c.d = obj1;
 
     // Then
-    expect(mockUpdateAtFn).toHaveBeenCalledWith('/a/b/c/d', obj1);
+    expect(mockUpdateAtFn).toHaveBeenCalledWith('/a/b/c/d', JSON.stringify(obj1));
   })
 
   test('design document: update item in array property', async () => {
@@ -197,6 +202,6 @@ describe('basic', () => {
     sut.array1[0] = value;
 
     // Then
-    expect(mockUpdateAtFn).toHaveBeenCalledWith('/array1/0', value);
+    expect(mockUpdateAtFn).toHaveBeenCalledWith('/array1/0', JSON.stringify(value));
   })
 });
