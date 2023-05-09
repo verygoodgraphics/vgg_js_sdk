@@ -12,7 +12,7 @@
   "scripts": {
     "start": "tsdx watch --format esm",
     "build": "tsdx build --format esm",
-    "build-dic": "tsdx build --format esm --entry src/vgg-di-container.tsx --name vgg-di-container",
+    "build-dic": "tsdx build --format esm --entry src/vgg-di-container.ts --name vgg-di-container",
     "test": "tsdx test",
     "test:watch": "tsdx test --watch",
     "lint": "tsdx lint",

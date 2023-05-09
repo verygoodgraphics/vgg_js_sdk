@@ -26,7 +26,8 @@ function vggSetObject(key: VggKeyType, value: VggValueType) {
 }
 
 function vggGetObject(key: VggKeyType): VggValueType {
-  return vggGetEnvContainer().get(key);
+  const value = vggGetEnvContainer().get(key);
+  return value;
 }
 
 export { vggGetEnv, vggSetEnv, vggSetObject, vggGetObject };
