@@ -1,0 +1,25 @@
+{
+  "name": "js_sdk_demo_rollup",
+  "version": "1.0.0",
+  "description": "",
+  "browser": "dist/1_add_color.mjs",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "Guanhua Hou",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "rollup": "^3.21.5",
+    "tslib": "^2.5.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "vgg-sdk": "link:.."
+  }
+}
