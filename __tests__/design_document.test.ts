@@ -75,7 +75,7 @@ describe('basic', () => {
   test('design document: add property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
-    const obj1 = {}
+    const obj1 = Object.freeze({});
 
     // When
     sut.a.b.c.d.k1 = obj1;
@@ -102,7 +102,7 @@ describe('basic', () => {
   test('design document: add item to array property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
-    const obj1 = {}
+    const obj1 = Object.freeze({});
 
     // When
     sut.array1.push(obj1);
@@ -115,7 +115,7 @@ describe('basic', () => {
   test('design document: add property using []', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
-    const obj1 = {};
+    const obj1 = Object.freeze({});
 
     // When
     sut.a.b.c.d['k2'] = obj1;
@@ -127,8 +127,8 @@ describe('basic', () => {
   test('design document: add property using Object.assign', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
-    const obj1 = {};
-    const src1 = { 'k3': obj1 };
+    const obj1 = Object.freeze({});
+    const src1 = Object.freeze({ 'k3': obj1 });
 
     // When
     Object.assign(sut.a.b.c.d, src1);
@@ -137,25 +137,30 @@ describe('basic', () => {
     expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k3', JSON.stringify(obj1));
   })
 
-  test('design document: DO NOT USE, error thrown. add property using Object.defineProperty', async () => {
+  test('design document: add property using Object.defineProperty', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
-    const obj1 = { 'k5': 'v1' };
+    const obj1 = Object.freeze({ 'k5': 'v1' });
     const descriptor1: PropertyDescriptor = {
+      configurable: true, // must be true, or will throw error: ProxyDefinePropertyIncompatible
+      enumerable: true,
       value: obj1,
-      writable: false,
-      // enumerable: true,  // default false
     };
 
     // When
     try {
       Object.defineProperty(sut.a.b.c.d, 'k4', descriptor1);
     } catch (error) {
-      // ProxyDefinePropertyIncompatible
+      console.log(error);
     }
 
     // Then
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k4', JSON.stringify(obj1));
 
+    // When
+    sut.a.b.c.d.k4.k6 = obj1;
+    // Then
+    expect(mockAddAtFn).toHaveBeenCalledWith('/a/b/c/d/k4/k6', JSON.stringify(obj1));
   })
 
   test('design document: delete property', async () => {
@@ -184,7 +189,7 @@ describe('basic', () => {
   test('design document: update property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
-    const obj1 = {};
+    const obj1 = Object.freeze({});
 
     // When
     sut.a.b.c.d = obj1;

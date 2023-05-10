@@ -34,7 +34,7 @@ class VggProxyHandler {
   constructor() {
   }
 
-  set(target: VggDesignDocumentType, prop: string, value: any) {
+  #processAddOrUpdateProperty(target: VggDesignDocumentType, prop: string, value: any): any {
     // @ts-ignore
     let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
     let copiedValue = value;
@@ -60,10 +60,15 @@ class VggProxyHandler {
       let childProxy = makeDeepProxy(copiedValue, this.rootDesignDocProxy!);
       // @ts-ignore
       defineParent(childProxy, target[_proxyKey]);
-      target[prop] = childProxy;
+      return childProxy;
     } else {
-      target[prop] = copiedValue;
+      return copiedValue;
     }
+  }
+
+  set(target: VggDesignDocumentType, prop: string, value: any) {
+    const v = this.#processAddOrUpdateProperty(target, prop, value);
+    target[prop] = v;
     return true;
   }
 
@@ -84,26 +89,8 @@ class VggProxyHandler {
 
   defineProperty(target: VggDesignDocumentType, prop: PropertyKey, descriptor: PropertyDescriptor) {
     if (typeof prop == 'string') {
-      // @ts-ignore
-      let path = getPathToNode(target[_proxyKey], this.rootDesignDocProxy!);
-      try {
-        if (descriptor.value) {
-          let value = descriptor.value;
-          if (typeof value == 'object') {
-            let proxyObj = makeDeepProxy(value, this.rootDesignDocProxy!);
-            descriptor.value = proxyObj;
-
-            if (target[prop]) {
-              this.rootDesignDocProxy?.sdk?.updateAt(`${path}${prop}`, value);
-            } else {
-              this.rootDesignDocProxy?.sdk?.addAt(`${path}${prop}`, value);
-            }
-          }
-
-        }
-      } catch (error) {
-        throw error;
-      }
+      const v = this.#processAddOrUpdateProperty(target, prop, descriptor.value);
+      descriptor.value = v;
     }
     return Reflect.defineProperty(target, prop, descriptor);
   }
