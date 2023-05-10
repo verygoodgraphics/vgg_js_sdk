@@ -1,5 +1,5 @@
-type VggEnvType = String;
-type VggKeyType = String;
+type VggEnvType = string;
+type VggKeyType = string;
 type VggValueType = any;
 
 let vggEnv: VggEnvType = '__vggDefaultEnv';

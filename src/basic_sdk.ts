@@ -1,6 +1,6 @@
-import * as localVggContainer from './vgg-di-container'
+import * as localVggContainer from './vgg-di-container';
 
-const dicUrl = 'https://s3.vgg.cool/test/js/vgg-di-container.esm.js'
+const dicUrl = 'https://s3.vgg.cool/test/js/vgg-di-container.esm.js';
 // const dicUrl = 'https://s3.vgg.cool/test/js/debug/vgg-di-container.esm.js';
 
 interface VggSdkType {
@@ -13,24 +13,30 @@ interface VggSdkType {
   updateAt(path: string, value: string): void;
 }
 interface VggContrainerType {
-  vggSetObject(key: string, value: any): void;
-  vggGetObject(key: string): any;
+  vggSetObject(key: string, value: object): void;
+  vggGetObject(key: string): object | undefined;
 }
 
-type VggWasmInstanceType = any;
+declare class VggWasmInstanceType {
+  VggSdk: {
+    new (): VggSdkType;
+  };
+}
 
-let vggSdk: VggSdkType | null;
-let vggContainer: VggContrainerType | null;
+let vggSdk: VggSdkType | undefined;
+let vggContainer: VggContrainerType | undefined;
 
 const vggWasmKey = 'vggWasmKey';
 
-async function getVggSdk(): Promise<VggSdkType> {
+async function getVggSdk(): Promise<VggSdkType | undefined> {
   if (!vggSdk) {
     const wasm = await getVgg();
-    vggSdk = new wasm.VggSdk();
+    if (wasm) {
+      vggSdk = new wasm.VggSdk();
+    }
   }
 
-  return vggSdk!;
+  return vggSdk;
 }
 
 async function mockVggSdk(sdk: VggSdkType) {
@@ -38,18 +44,24 @@ async function mockVggSdk(sdk: VggSdkType) {
 }
 
 async function setVgg(value: VggWasmInstanceType) {
-  let container = await getContainer();
-  container.vggSetObject(vggWasmKey, value);
+  const container = await getContainer();
+  if (container) {
+    container.vggSetObject(vggWasmKey, value);
+  }
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function getVgg(): Promise<VggWasmInstanceType> {
+async function getVgg(): Promise<VggWasmInstanceType | undefined> {
   const container = await getContainer();
+  if (!container) {
+    return undefined;
+  }
 
-  let vgg: VggWasmInstanceType;
-  for (let i = 0; i < 1000; i++) {  // retry; wait for setVgg
-    vgg = container.vggGetObject(vggWasmKey);
+  let vgg: VggWasmInstanceType | undefined;
+  for (let i = 0; i < 1000; i++) {
+    // retry; wait for setVgg
+    vgg = container.vggGetObject(vggWasmKey) as VggWasmInstanceType | undefined;
     if (vgg) {
       break;
     }
@@ -59,22 +71,27 @@ async function getVgg(): Promise<VggWasmInstanceType> {
   return vgg;
 }
 
-
-async function getContainer(): Promise<VggContrainerType> {
+async function getContainer(): Promise<VggContrainerType | undefined> {
   if (!vggContainer) {
     vggContainer = await getRemoteContainer();
   }
-  return Promise.resolve(vggContainer!);
+  return Promise.resolve(vggContainer);
 }
 
 async function getRemoteContainer(): Promise<VggContrainerType> {
-  // @ts-ignore Import module from url
-  return await import(/* webpackIgnore: true */dicUrl);
+  return await import(/* webpackIgnore: true */ dicUrl);
 }
 
 function mockVggContainer() {
   vggContainer = localVggContainer;
 }
 
-
-export { getVggSdk, setVgg, getVgg, VggSdkType, mockVggSdk, VggContrainerType, mockVggContainer };
+export {
+  getVggSdk,
+  setVgg,
+  getVgg,
+  VggSdkType,
+  mockVggSdk,
+  VggContrainerType,
+  mockVggContainer,
+};

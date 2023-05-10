@@ -10,14 +10,14 @@
     "node": ">=10"
   },
   "scripts": {
-    "start": "tsdx watch --format esm",
-    "build": "tsdx build --format esm",
-    "build-dic": "tsdx build --format esm --entry src/vgg-di-container.ts --name vgg-di-container",
-    "test": "tsdx test",
-    "test:watch": "tsdx test --watch",
-    "lint": "tsdx lint",
-    "prettier": "tsdx lint src --fix",
-    "prepare": "tsdx build",
+    "start": "dts watch --format esm",
+    "build": "dts build --format esm",
+    "build-dic": "dts build --format esm --entry src/vgg-di-container.ts --name vgg-di-container",
+    "test": "dts test",
+    "test:watch": "dts test --watch",
+    "lint": "dts lint",
+    "prettier": "dts lint src --fix",
+    "prepare": "dts build",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
@@ -26,7 +26,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "dts lint"
     }
   },
   "prettier": {
@@ -54,11 +54,11 @@
     "@size-limit/preset-small-lib": "^8.2.4",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "dts-cli": "^2.0.3",
     "husky": "^8.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "size-limit": "^8.2.4",
-    "tsdx": "^0.14.1",
     "tslib": "^2.5.0",
     "typescript": "^4.9.5"
   }

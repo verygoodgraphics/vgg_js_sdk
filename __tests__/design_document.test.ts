@@ -69,6 +69,10 @@ describe('basic', () => {
     const doc = await sut.getDesignDocument();
 
     // Then
+    expect(doc).not.toBeUndefined();
+    if (!doc) {
+      return;
+    }
     expect(sut.isProxy(doc)).toBeTruthy;
   })
 
@@ -76,6 +80,10 @@ describe('basic', () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
     const obj1 = Object.freeze({});
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
 
     // When
     sut.a.b.c.d.k1 = obj1;
@@ -91,6 +99,10 @@ describe('basic', () => {
   test('design document: add color property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
     const aColor: Color = { class: 'color', alpha: 1.0, red: 0.9, blue: 1.0, green: 0 };
 
     // When
@@ -102,6 +114,10 @@ describe('basic', () => {
   test('design document: add item to array property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
     const obj1 = Object.freeze({});
 
     // When
@@ -115,6 +131,10 @@ describe('basic', () => {
   test('design document: add property using []', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
     const obj1 = Object.freeze({});
 
     // When
@@ -127,6 +147,10 @@ describe('basic', () => {
   test('design document: add property using Object.assign', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
     const obj1 = Object.freeze({});
     const src1 = Object.freeze({ 'k3': obj1 });
 
@@ -140,6 +164,10 @@ describe('basic', () => {
   test('design document: add property using Object.defineProperty', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
     const obj1 = Object.freeze({ 'k5': 'v1' });
     const descriptor1: PropertyDescriptor = {
       configurable: true, // must be true, or will throw error: ProxyDefinePropertyIncompatible
@@ -166,6 +194,10 @@ describe('basic', () => {
   test('design document: delete property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
 
     // When
     delete sut.a.b.c.d;
@@ -177,6 +209,10 @@ describe('basic', () => {
   test('design document: delete item in array property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
 
     // When
     sut.array1.pop();
@@ -189,6 +225,10 @@ describe('basic', () => {
   test('design document: update property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
     const obj1 = Object.freeze({});
 
     // When
@@ -201,7 +241,11 @@ describe('basic', () => {
   test('design document: update item in array property', async () => {
     // Given
     const sut = await DesignDocument.getDesignDocument();
-    const value = 'item 0'
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
+    const value = 'item 0';
 
     // When
     sut.array1[0] = value;
