@@ -3,6 +3,32 @@ import * as localVggContainer from './vgg-di-container';
 const dicUrl = 'https://s3.vgg.cool/test/js/vgg-di-container.esm.js';
 // const dicUrl = 'https://s3.vgg.cool/test/js/debug/vgg-di-container.esm.js';
 
+type EventType =
+  | 'keydown'
+  | 'keyup'
+  | 'auxclick'
+  | 'click'
+  | 'contextmenu'
+  | 'dblclick'
+  | 'mousedown'
+  | 'mouseenter'
+  | 'mouseleave'
+  | 'mousemove'
+  | 'mouseout'
+  | 'mouseover'
+  | 'mouseup'
+  | 'touchcancel'
+  | 'touchend'
+  | 'touchmove'
+  | 'touchstart';
+type EventListenerItem = {
+  type: EventType;
+  listener: string;
+};
+interface EventListners {
+  EventType?: Array<EventListenerItem>;
+}
+
 interface VggSdkType {
   // addObserver(observer: VggSdkObserver): void;
 
@@ -11,7 +37,12 @@ interface VggSdkType {
   addAt(path: string, value: string): void;
   deleteAt(path: string): void;
   updateAt(path: string, value: string): void;
+
+  addEventListener(path: string, type: string, code: string): void;
+  removeEventListener(path: string, type: string, code: string): void;
+  getEventListeners(path: string): EventListners;
 }
+
 interface VggContrainerType {
   vggSetObject(key: string, value: object): void;
   vggGetObject(key: string): object | undefined;
@@ -90,6 +121,8 @@ export {
   getVggSdk,
   setVgg,
   getVgg,
+  EventType,
+  EventListners,
   VggSdkType,
   mockVggSdk,
   VggContrainerType,

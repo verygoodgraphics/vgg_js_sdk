@@ -6,9 +6,14 @@ import { Color } from '../src/design_document_types';
 
 describe('basic', () => {
   const mockFn = jest.spyOn(VggSdk, 'getVggSdk');
+
   const mockAddAtFn = jest.fn((_path: string, _value: string) => { console.log(`fakeSdk, addAt: ${_path}, ${_value}`); });
   const mockDeleteAtFn = jest.fn((_path: string) => { console.log(`fakeSdk, deleteAt: ${_path}`); });
   const mockUpdateAtFn = jest.fn((_path: string, _value: string) => { console.log(`fakeSdk, updateAt: ${_path}, ${_value}`); });
+
+  const mockAddEventListenerFn = jest.fn((_path: string, _type: string, _code: string) => { console.log(`fakeSdk, addEventListener: ${_path}, ${_type}, ${_code}`); });
+  const mockRemoveEventListenerFn = jest.fn((_path: string, _type: string, _code: string) => { console.log(`fakeSdk, removeEventListener: ${_path}, ${_type}, ${_code}`); });
+  const mockGetEventListenersFn = jest.fn((_path: string): VggSdk.EventListners => { console.log(`fakeSdk, getEventListeners: ${_path}`); return {}; });
 
   beforeEach(() => {
     const mockDocument = {
@@ -34,6 +39,10 @@ describe('basic', () => {
         addAt: mockAddAtFn,
         deleteAt: mockDeleteAtFn,
         updateAt: mockUpdateAtFn,
+
+        addEventListener: mockAddEventListenerFn,
+        removeEventListener: mockRemoveEventListenerFn,
+        getEventListeners: mockGetEventListenersFn
       };
       return Promise.resolve(fakeSdk);
     });
@@ -44,6 +53,10 @@ describe('basic', () => {
     mockAddAtFn.mockClear();
     mockDeleteAtFn.mockClear();
     mockUpdateAtFn.mockClear();
+
+    mockAddEventListenerFn.mockClear();
+    mockRemoveEventListenerFn.mockClear();
+    mockGetEventListenersFn.mockClear();
   });
 
   afterAll(() => {
@@ -252,5 +265,54 @@ describe('basic', () => {
 
     // Then
     expect(mockUpdateAtFn).toHaveBeenCalledWith('/array1/0', JSON.stringify(value));
+  })
+
+  test('design document: add event listener', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
+    const listener_code = 'console.log("hello")';
+    const event_type = 'click';
+
+    // When
+    sut.a.b.c.d.addEventListener(event_type, listener_code);
+
+    // Then
+    expect(mockAddEventListenerFn).toHaveBeenCalledWith('/a/b/c/d', event_type, listener_code);
+  })
+
+  test('design document: remove event listener', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
+    const listener_code = 'console.log("hello")';
+    const event_type = 'click';
+
+    // When
+    sut.a.b.c.d.removeEventListener(event_type, listener_code);
+
+    // Then
+    expect(mockRemoveEventListenerFn).toHaveBeenCalledWith('/a/b/c/d', event_type, listener_code);
+  })
+
+  test('design document: get event listeners', async () => {
+    // Given
+    const sut = await DesignDocument.getDesignDocument();
+    expect(sut).not.toBeUndefined();
+    if (!sut) {
+      return;
+    }
+
+    // When
+    sut.a.b.c.d.getEventListeners();
+
+    // Then
+    expect(mockGetEventListenersFn).toHaveBeenCalledWith('/a/b/c/d');
   })
 });

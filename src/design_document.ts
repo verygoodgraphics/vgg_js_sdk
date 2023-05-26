@@ -1,8 +1,10 @@
-import { getVggSdk } from './basic_sdk';
+import { VggSdkType, getVggSdk, EventType, EventListners } from './basic_sdk';
 
 const _isProxyKey = Symbol();
 const _proxyKey = Symbol();
 const _parentKey = Symbol();
+
+let _sdk: VggSdkType | undefined;
 
 interface VggDesignDocumentType {
   // https://github.com/Microsoft/TypeScript/issues/24587
@@ -15,6 +17,8 @@ async function getDesignDocument(): Promise<VggDesignDocumentType | undefined> {
   if (!sdk) {
     return undefined;
   }
+  _sdk = sdk;
+
   const docString = sdk.getDesignDocument();
   const jsonDoc = JSON.parse(docString);
 
@@ -36,7 +40,7 @@ class VggProxyHandler {
     prop: string,
     value: any
   ): any {
-    const path = getPathToNode(target[_proxyKey]);
+    const path = getNodePath(target[_proxyKey]);
     let copiedValue = value;
     const isSdk = path === '/' && prop === 'sdk';
     if (!isSdk) {
@@ -75,7 +79,7 @@ class VggProxyHandler {
 
   deleteProperty(target: VggDesignDocumentType, prop: string) {
     if (prop in target) {
-      const path = getPathToNode(target[_proxyKey]);
+      const path = getNodePath(target[_proxyKey]);
       this.rootDesignDocProxy?.sdk?.deleteAt(`${path}${prop}`);
 
       return delete target[prop];
@@ -104,7 +108,7 @@ class VggProxyHandler {
 parent.childName = child
 parent.children[0] = child
 */
-function getPathToNode(nodeProxy: VggDesignDocumentType) {
+function getNodePath(nodeProxy: VggDesignDocumentType) {
   let path = '';
 
   if (!nodeProxy) {
@@ -130,6 +134,10 @@ function getPathToNode(nodeProxy: VggDesignDocumentType) {
   return path;
 }
 
+function getNodePathForEventListener(nodeProxy: VggDesignDocumentType) {
+  return getNodePath(nodeProxy).slice(0, -1);
+}
+
 function makeDeepProxy(
   object: VggDesignDocumentType,
   rootObject: VggDesignDocumentType | undefined
@@ -141,6 +149,8 @@ function makeDeepProxy(
   if (isProxy(object)) {
     return object;
   }
+
+  setEventListenerMethods(object);
 
   const handler = new VggProxyHandler();
   const selfProxy = new Proxy(object, handler);
@@ -184,6 +194,78 @@ function defineParent(
       configurable: false,
     });
   }
+}
+
+function setEventListenerMethods(node: VggDesignDocumentType) {
+  node.addEventListener = addEventListener;
+  node.removeEventListener = removeEventListener;
+  node.getEventListeners = getEventListeners;
+}
+
+function addEventListener(
+  this: VggDesignDocumentType,
+  type: EventType,
+  code: string
+): void {
+  const path = getNodePathForEventListener(this);
+  _sdk?.addEventListener(path, type, code);
+}
+
+function removeEventListener(
+  this: VggDesignDocumentType,
+  type: EventType,
+  code: string
+): void {
+  const path = getNodePathForEventListener(this);
+  _sdk?.removeEventListener(path, type, code);
+}
+
+function getEventListeners(this: VggDesignDocumentType): EventListners {
+  if (!_sdk) {
+    return {};
+  }
+  const path = getNodePathForEventListener(this);
+  return _sdk.getEventListeners(path);
+  /*
+chrome console getEventListeners result
+ {
+  "click": [
+    {
+      "useCapture": false,
+      "passive": false,
+      "once": false,
+      "type": "click",
+      "listener": f
+    },
+    {
+      "useCapture": true,
+      "passive": false,
+      "once": false,
+      "type": "click",
+      "listener": f
+    }
+  ],
+  "mousedown": [
+    {
+      "useCapture": true,
+      "passive": false,
+      "once": false,
+      "type": "mousedown",
+      "listener": f
+    }
+  ],
+  "mouseup": [
+    {
+      "useCapture": true,
+      "passive": false,
+      "once": false,
+      "type": "mouseup",
+      "listener": f
+    }
+  ]
+}; 
+
+  */
 }
 
 // todo, observe native update
