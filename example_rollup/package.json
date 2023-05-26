@@ -2,7 +2,6 @@
   "name": "js_sdk_demo_rollup",
   "version": "1.0.0",
   "description": "",
-  "browser": "dist/1_add_color.mjs",
   "scripts": {
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"

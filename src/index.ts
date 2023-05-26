@@ -2,6 +2,7 @@ import {
   getVggSdk,
   setVgg,
   getVgg,
+  EventListenerNode,
   mockVggSdk,
   mockVggContainer,
 } from './basic_sdk';
@@ -12,6 +13,7 @@ export {
   setVgg,
   getVgg,
   DesignDocument,
+  EventListenerNode,
   mockVggSdk,
   mockVggContainer,
 };

@@ -29,6 +29,12 @@ interface EventListners {
   EventType?: Array<EventListenerItem>;
 }
 
+interface EventListenerNode {
+  addEventListener(type: EventType, code: string): void;
+  removeEventListener(type: EventType, code: string): void;
+  getEventListeners(): EventListners;
+}
+
 interface VggSdkType {
   // addObserver(observer: VggSdkObserver): void;
 
@@ -123,6 +129,7 @@ export {
   getVgg,
   EventType,
   EventListners,
+  EventListenerNode,
   VggSdkType,
   mockVggSdk,
   VggContrainerType,
