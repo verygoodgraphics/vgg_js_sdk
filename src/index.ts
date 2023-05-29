@@ -4,7 +4,6 @@ import {
   getVgg,
   EventListenerNode,
   mockVggSdk,
-  mockVggContainer,
 } from './basic_sdk';
 import * as DesignDocument from './design_document';
 
@@ -15,5 +14,4 @@ export {
   DesignDocument,
   EventListenerNode,
   mockVggSdk,
-  mockVggContainer,
 };

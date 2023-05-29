@@ -16,6 +16,7 @@ async function test() {
 
 	// Then
 	let listeners = node.getEventListeners();
+	console.log('listeners after adding are: ', listeners);
 	if (listeners[event_type][0].listener !== listener_code) {
 		throw new Error('add or get failed');
 	}
@@ -23,6 +24,7 @@ async function test() {
 	// When
 	node.removeEventListener(event_type, listener_code);
 	listeners = node.getEventListeners();
+	console.log('listeners after removal are: ', listeners);
 	if (listeners[event_type].length !== 0) {
 		throw new Error('remove failed');
 	}

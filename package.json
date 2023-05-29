@@ -16,7 +16,7 @@
     "test": "dts test",
     "test:watch": "dts test --watch",
     "lint": "dts lint",
-    "prettier": "dts lint src --fix",
+    "lint:fix": "dts lint src --fix",
     "prepare": "dts build",
     "size": "size-limit",
     "analyze": "size-limit --why"

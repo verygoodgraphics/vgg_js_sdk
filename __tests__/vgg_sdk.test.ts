@@ -15,15 +15,4 @@ describe('smoke', () => {
     expect(fn).toBeInstanceOf(Function)
   })
 
-  test('getVggSdk', async () => {
-    // Given
-    const sut = VggSdk;
-    sut.mockVggContainer();
-
-    // When
-    const vgg = await sut.getVgg();
-
-    // Then
-    expect(vgg).toBeUndefined();
-  })
 });

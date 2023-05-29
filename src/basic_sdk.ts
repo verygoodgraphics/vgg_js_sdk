@@ -1,5 +1,3 @@
-import * as localVggContainer from './vgg-di-container';
-
 const dicUrl = 'https://s3.vgg.cool/test/js/vgg-di-container.esm.js';
 // const dicUrl = 'https://s3.vgg.cool/test/js/debug/vgg-di-container.esm.js';
 
@@ -119,10 +117,6 @@ async function getRemoteContainer(): Promise<VggContrainerType> {
   return await import(/* webpackIgnore: true */ dicUrl);
 }
 
-function mockVggContainer() {
-  vggContainer = localVggContainer;
-}
-
 export {
   getVggSdk,
   setVgg,
@@ -133,5 +127,4 @@ export {
   VggSdkType,
   mockVggSdk,
   VggContrainerType,
-  mockVggContainer,
 };
