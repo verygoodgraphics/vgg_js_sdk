@@ -12,7 +12,7 @@
   "scripts": {
     "start": "dts watch --format esm",
     "build": "dts build --format esm",
-    "build-dic": "dts build --format esm --entry src/vgg-di-container.ts --name vgg-di-container",
+    "build-dic": "dts build --format esm --entry ./src/vgg-di-container.ts --name vgg-di-container",
     "test": "dts test",
     "test:watch": "dts test --watch",
     "lint": "dts lint",
