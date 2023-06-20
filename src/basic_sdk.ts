@@ -1,5 +1,4 @@
-const dicUrl = 'https://s3.vgg.cool/test/js/vgg-di-container.esm.js';
-// const dicUrl = 'https://s3.vgg.cool/test/js/debug/vgg-di-container.esm.js';
+const dicUrl = 'https://s5.vgg.cool/vgg-di-container.esm.js';
 
 type EventType =
   | 'keydown'

@@ -1,7 +1,13 @@
 {
-  "version": "0.2.0",
+  "name": "@verygoodgraphics/vgg-sdk",
+  "version": "0.3.0",
+  "homepage": "https://verygoodgraphics.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/verygoodgraphics/vgg_js_sdk.git"
+  },
   "license": "MIT",
-  "main": "dist/vgg-sdk.esm.js",
+  "browser": "dist/vgg-sdk.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
@@ -17,17 +23,9 @@
     "test:watch": "dts test --watch",
     "lint": "dts lint",
     "lint:fix": "dts lint src --fix",
-    "prepare": "dts build",
+    "prepare": "dts build --format esm",
     "size": "size-limit",
     "analyze": "size-limit --why"
-  },
-  "peerDependencies": {
-    "react": ">=16"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "dts lint"
-    }
   },
   "prettier": {
     "printWidth": 80,
@@ -35,8 +33,6 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "vgg-sdk",
-  "author": "Guanhua Hou",
   "module": "dist/vgg-sdk.esm.js",
   "size-limit": [
     {
@@ -49,15 +45,9 @@
     }
   ],
   "devDependencies": {
-    "@babel/preset-react": "^7.18.6",
     "@jest/globals": "^29.5.0",
     "@size-limit/preset-small-lib": "^8.2.4",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
     "dts-cli": "^2.0.3",
-    "husky": "^8.0.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "size-limit": "^8.2.4",
     "tslib": "^2.5.0",
     "typescript": "^4.9.5"

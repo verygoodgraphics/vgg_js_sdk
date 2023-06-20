@@ -8,7 +8,7 @@ const commonConfig = {
     dir: 'dist',
     entryFileNames: '[name].mjs',
   },
-  external: ['https://s3.vgg.cool/test/js/vgg-di-container.esm.js'],
+  external: ['https://s5.vgg.cool/vgg-di-container.esm.js'],
   plugins: [
     resolve(),
     commonjs(),
